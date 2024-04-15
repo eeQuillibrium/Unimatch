@@ -1,0 +1,4 @@
+grpc:
+  authport: 44044
+http:
+  port: 8080
