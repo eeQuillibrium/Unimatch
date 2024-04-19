@@ -1,24 +1,28 @@
 package repository
 
-import "context"
+import (
+	"context"
+
+	"github.com/eeQuillibrium/Unimatch/auth_service/internal/domain/models"
+	"github.com/jmoiron/sqlx"
+)
 
 type Auth interface {
 	Register(
 		ctx context.Context,
 		login string,
-		password string,
+		passHash string,
 	) (userId int, err error)
 	Login(
 		ctx context.Context,
 		login string,
-		password string,
-	) (token string, err error)
+	) (user *models.User, err error)
 }
 
 type Repository struct {
 	AuthRepository Auth
 }
 
-func NewRepository() *Repository {
-	return &Repository{AuthRepository: NewAuthRepository()}
+func NewRepository(db *sqlx.DB) *Repository {
+	return &Repository{AuthRepository: NewAuthRepository(db)}
 }

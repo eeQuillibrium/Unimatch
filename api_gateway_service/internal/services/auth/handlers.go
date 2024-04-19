@@ -13,9 +13,8 @@ func (a *authservice) signUpHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := context.Background()
 
-		var user dto.User
-
-		if err := c.Bind(&user); err != nil {
+		user := &dto.User{}
+		if err := c.Bind(user); err != nil {
 			a.log.Errorf("signUpHandler() error: %w", err)
 			return httpErrors.ParseErrors(err)
 		}
@@ -33,9 +32,9 @@ func (a *authservice) signInHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := context.Background()
 
-		var user dto.User
+		user := &dto.User{}
 
-		if err := c.Bind(&user); err != nil {
+		if err := c.Bind(user); err != nil {
 			a.log.Errorf("signInHandler() error: %w", err)
 			return httpErrors.ParseErrors(err)
 		}
@@ -43,9 +42,10 @@ func (a *authservice) signInHandler() echo.HandlerFunc {
 		token, err := a.gRPCCLient.Login(ctx, user.Login, user.Password)
 		if err != nil {
 			a.log.Errorf("signInHandler() error: %w", err)
+			return httpErrors.ParseErrors(err)
 		}
 
-		c.Response().Header().Set("Authorization token", token)
+		c.Response().Header().Set("Authorization_token", token)
 		c.Response().Status = http.StatusOK
 		return nil
 	}

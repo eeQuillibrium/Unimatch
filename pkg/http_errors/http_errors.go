@@ -45,7 +45,6 @@ func ParseErrors(err error) *RestError {
 	switch {
 	case strings.Contains(strings.ToLower(err.Error()), "grpc"):
 		return NewRestError(http.StatusBadGateway, ErrBadGateway)
-
 	}
 	return NewRestError(http.StatusInternalServerError, ErrInternalServerError)
 }

@@ -1,0 +1,8 @@
+grpc:
+  serverport: 44044
+postgresdb:
+  username: "postgres"
+  dbname: "postgres"
+  host: "localhost"
+  port: 5432
+  sslmode: "disable"

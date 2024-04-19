@@ -1,11 +1,28 @@
 version: '3.8'
   
 services:
-  gateway:
+  unimatch:
+    build: ./
+    command: ./api_gateway_service/bin/main && ./auth_service/bin/main
     ports:
       - 8080:8080
-  
-  auth:
+    depends_on:
+      - postgres_dbauth
+    environment:
+      - DB_PASSWORD=secret
+      - CONFIG_PATH=./config/config.yaml
+  postgres_dbauth:
+    restart: always
+    image: postgres:latest
     ports:
-      - 8081:8081
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DBNAME=postgres
+    
+    
+
+  
+
+  
   

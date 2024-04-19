@@ -22,7 +22,7 @@ func NewApp(
 	log *logger.Logger,
 	cfg *config.Config,
 ) *app {
-	return &app{echo: echo.New(), log: log}
+	return &app{echo: echo.New(), log: log, cfg: cfg}
 }
 
 func (a *app) Run() error {
@@ -30,6 +30,10 @@ func (a *app) Run() error {
 	defer cancel()
 
 	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg.GRPC.AuthPort)
+
+	if err := grpcApp.Run(); err != nil {
+		a.log.Errorf("error with runHttoServer %w", err)
+	}
 
 	authService := authservice.NewAuthService(a.log, a.echo.Group("/auth"), grpcApp.Auth)
 	authService.MapRoutes()

@@ -18,7 +18,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("InitConfig() error: %w", err)
 	}
-
+	log.Info(cfg.GRPC.Serverport)
 	app := app.NewApp(log, cfg)
 
 	app.Run()

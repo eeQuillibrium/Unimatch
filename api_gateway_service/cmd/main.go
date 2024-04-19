@@ -19,7 +19,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("config error: %v", err)
 	}
-
 	app := app.NewApp(log, cfg)
 
 	app.Run()

@@ -9,15 +9,22 @@ import (
 )
 
 type Config struct {
-	GRPC GRPC `yaml:"grpc"`
+	GRPC       GRPC       `yaml:"grpc"`
+	PostgresDB PostgresDB `yaml:"postgresdb"`
 }
 type GRPC struct {
 	Serverport int `yaml:"serverport"`
 }
+type PostgresDB struct {
+	Username string `yaml:"username"`
+	DBName   string `yaml:"dbname"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	SSLMode  string `yaml:"sslmode"`
+}
 
 func InitConfig() (*Config, error) {
 	path := fetchConfigPath()
-
 	if path == "" {
 		return nil, errors.New("empty config path")
 	}

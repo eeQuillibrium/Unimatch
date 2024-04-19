@@ -9,5 +9,5 @@ type Logger struct {
 }
 
 func NewLogger() *Logger {
-	return &Logger{}
+	return &Logger{*zap.NewExample().Sugar()}
 }

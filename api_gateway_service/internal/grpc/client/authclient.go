@@ -10,7 +10,9 @@ import (
 )
 
 const (
-	errGRPC = "grpc: "
+	errGRPC       = "grpc: "
+	defaultInt    = 0
+	defaultString = ""
 )
 
 type authClient struct {
@@ -39,9 +41,10 @@ func (a *authClient) Register(
 	resp, err := a.cl.Register(ctx, &auth_grpc.RegisterRequest{Login: login, Password: password})
 	if err != nil {
 		a.log.Errorf("error in grpc Register(login, password) func: %w", err)
+		return defaultInt, fmt.Errorf("%s error in grpc Register(login, password) func: %w", errGRPC, err)
 	}
-	
-	return int(resp.GetUserId()), fmt.Errorf("%s, %v", errGRPC, err)
+
+	return int(resp.GetUserId()), nil
 }
 
 func (a *authClient) Login(
@@ -52,9 +55,10 @@ func (a *authClient) Login(
 	resp, err := a.cl.Login(ctx, &auth_grpc.LoginRequest{Login: login, Password: password})
 	if err != nil {
 		a.log.Errorf("error in grpc Login(login, password) func: %w", err)
+		return defaultString, fmt.Errorf("%s error in grpc Login(login, password) func: %w", errGRPC, err)
 	}
 
-	return resp.GetToken(), fmt.Errorf("%s, %v", errGRPC, err)
+	return resp.GetToken(), nil
 }
 func (a *authClient) IdentifyUser(
 	ctx context.Context,
@@ -63,7 +67,8 @@ func (a *authClient) IdentifyUser(
 	resp, err := a.cl.IdentifyUser(ctx, &auth_grpc.IdentifyRequest{Token: token})
 	if err != nil {
 		a.log.Errorf("error in grpc IdentifyUser(token) func: %w", err)
+		return defaultInt, fmt.Errorf("%s error in grpc IdentifyUser(token) func: %w", errGRPC, err)
 	}
 
-	return int(resp.GetUserId()), fmt.Errorf("%s, %v", errGRPC, err)
+	return int(resp.GetUserId()), nil
 }
