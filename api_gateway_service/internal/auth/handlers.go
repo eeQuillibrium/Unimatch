@@ -1,4 +1,4 @@
-package authservice
+package auth
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (a *authservice) signUpHandler() echo.HandlerFunc {
+func (a *authHandlers) signUpHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := context.Background()
 
@@ -19,7 +19,7 @@ func (a *authservice) signUpHandler() echo.HandlerFunc {
 			return httpErrors.ParseErrors(err)
 		}
 
-		userId, err := a.gRPCCLient.Register(ctx, user.Login, user.Password)
+		userId, err := a.authService.Register(ctx, user.Login, user.Password)
 		if err != nil {
 			a.log.Errorf("signUpHandler() error: %w", err)
 			return httpErrors.ParseErrors(err)
@@ -28,7 +28,7 @@ func (a *authservice) signUpHandler() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, &dto.UserId{UserId: userId})
 	}
 }
-func (a *authservice) signInHandler() echo.HandlerFunc {
+func (a *authHandlers) signInHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := context.Background()
 
@@ -39,7 +39,7 @@ func (a *authservice) signInHandler() echo.HandlerFunc {
 			return httpErrors.ParseErrors(err)
 		}
 
-		token, err := a.gRPCCLient.Login(ctx, user.Login, user.Password)
+		token, err := a.authService.Login(ctx, user.Login, user.Password)
 		if err != nil {
 			a.log.Errorf("signInHandler() error: %w", err)
 			return httpErrors.ParseErrors(err)

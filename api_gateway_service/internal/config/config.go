@@ -5,12 +5,14 @@ import (
 	"flag"
 	"os"
 
+	"github.com/eeQuillibrium/Unimatch/pkg/kafka"
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	GRPC GRPC `yaml:"grpc"`
-	Http Http `yaml:"http"`
+	GRPC  GRPC         `yaml:"grpc"`
+	Http  Http         `yaml:"http"`
+	Kafka kafka.Config `yaml:"kafka"`
 }
 type GRPC struct {
 	AuthPort int `yaml:"authport"`
@@ -25,6 +27,8 @@ func InitConfig() (*Config, error) {
 	if path == "" {
 		return nil, errors.New("empty config path")
 	}
+
+
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return nil, err
@@ -48,7 +52,7 @@ func fetchConfigPath() string {
 	flag.Parse()
 
 	if path == "" {
-		path = os.Getenv("CONFIG_PATH")
+		path = os.Getenv("CONFIG_GATEWAY_PATH")
 	}
 	return path
 }

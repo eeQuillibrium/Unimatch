@@ -5,9 +5,12 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/auth"
 	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/config"
 	grpcapp "github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/grpc"
-	authservice "github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/services/auth"
+	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/profile"
+	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/service"
+	"github.com/eeQuillibrium/Unimatch/pkg/kafka"
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
@@ -35,8 +38,14 @@ func (a *app) Run() error {
 		a.log.Errorf("error with runHttoServer %w", err)
 	}
 
-	authService := authservice.NewAuthService(a.log, a.echo.Group("/auth"), grpcApp.Auth)
-	authService.MapRoutes()
+	pr := kafka.NewProducer(a.log, a.cfg.Kafka.Brokers)
+	services := service.NewService(a.log, grpcApp.Auth, pr)
+
+	authHandlers := auth.NewAuthHandlers(a.log, a.echo.Group("/auth"), services.Auth)
+	authHandlers.MapRoutes()
+
+	profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile", authHandlers.AuthMiddleware), services.Profile)
+	profileHandlers.MapRoutes()
 
 	go func() {
 		if err := a.runHttpServer(); err != nil {
@@ -47,5 +56,9 @@ func (a *app) Run() error {
 
 	<-ctx.Done()
 
+	if err := a.echo.Shutdown(ctx); err != nil {
+		a.log.Warn("echo shutdown: %w", err)
+	}
+	
 	return nil
 }

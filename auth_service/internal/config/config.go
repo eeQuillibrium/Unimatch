@@ -25,6 +25,7 @@ type PostgresDB struct {
 
 func InitConfig() (*Config, error) {
 	path := fetchConfigPath()
+
 	if path == "" {
 		return nil, errors.New("empty config path")
 	}
@@ -51,7 +52,7 @@ func fetchConfigPath() string {
 	flag.Parse()
 
 	if path == "" {
-		path = os.Getenv("CONFIG_PATH")
+		path = os.Getenv("CONFIG_AUTH_PATH")
 	}
 	return path
 }

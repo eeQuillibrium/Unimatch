@@ -34,15 +34,17 @@ func NewApp(
 func (a *app) Run() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
-	
-	db, err := sqlx.Connect("postgres", fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s port=%d ",
+	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=%s",
+		a.cfg.PostgresDB.Host,
+		a.cfg.PostgresDB.Port,
 		a.cfg.PostgresDB.Username,
 		os.Getenv("DB_PASSWORD"),
-		a.cfg.PostgresDB.Host,
 		a.cfg.PostgresDB.DBName,
 		a.cfg.PostgresDB.SSLMode,
-		a.cfg.PostgresDB.Port),
 	)
+	a.log.Info(dsn)
+	db, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
 		a.log.Fatalf("postgres db open problem: %w", err)
 	}

@@ -1,4 +1,4 @@
-package authservice
+package auth
 
 import (
 	"context"
@@ -8,14 +8,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (a *authservice) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func (a *authHandlers) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Request().Header.Get("Authorization token")
 
-		userId, err := a.gRPCCLient.IdentifyUser(context.Background(), token)
+		userId, err := a.authService.IdentifyUser(context.Background(), token)
 		if err != nil {
 			c.Response().WriteHeader(http.StatusUnauthorized)
-			return err
+			return c.JSON(http.StatusUnauthorized, token)
 		}
 
 		c.Request().Header.Set("userid", fmt.Sprintf("%d", userId))

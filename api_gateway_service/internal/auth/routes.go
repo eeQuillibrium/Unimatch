@@ -1,7 +1,7 @@
-package authservice
+package auth
 
 
-func (a *authservice) MapRoutes() {
+func (a *authHandlers) MapRoutes() {
 	a.echogroup.POST("/signUp", a.signUpHandler())
 	a.echogroup.POST("/signIn", a.signInHandler())
 }
