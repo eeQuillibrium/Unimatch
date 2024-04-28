@@ -13,7 +13,7 @@ localhost:8080/auth/signUp - регистрация (POST)
 localhost:8080/auth/signIn - авторизация (POST)  
 Такой json:  
 {  
-  "login": "Andrey",  
-  "password": "secret123"  
+&ensp;"login": "Andrey",  
+&ensp;"password": "secret123"  
 }  
 Ответ приходит в хедере "Authorization_token"  
