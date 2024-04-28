@@ -40,8 +40,7 @@ func (a *authClient) Register(
 ) (int, error) {
 	resp, err := a.cl.Register(ctx, &auth_grpc.RegisterRequest{Login: login, Password: password})
 	if err != nil {
-		a.log.Errorf("error in grpc Register(login, password) func: %w", err)
-		return defaultInt, fmt.Errorf("%s error in grpc Register(login, password) func: %w", errGRPC, err)
+		return defaultInt, fmt.Errorf("%s Register(login, password) func: %w", errGRPC, err)
 	}
 
 	return int(resp.GetUserId()), nil
@@ -54,8 +53,7 @@ func (a *authClient) Login(
 ) (string, error) {
 	resp, err := a.cl.Login(ctx, &auth_grpc.LoginRequest{Login: login, Password: password})
 	if err != nil {
-		a.log.Errorf("error in grpc Login(login, password) func: %w", err)
-		return defaultString, fmt.Errorf("%s error in grpc Login(login, password) func: %w", errGRPC, err)
+		return defaultString, fmt.Errorf("%s Login(login, password) func: %w", errGRPC, err)
 	}
 
 	return resp.GetToken(), nil
@@ -66,8 +64,7 @@ func (a *authClient) IdentifyUser(
 ) (int, error) {
 	resp, err := a.cl.IdentifyUser(ctx, &auth_grpc.IdentifyRequest{Token: token})
 	if err != nil {
-		a.log.Errorf("error in grpc IdentifyUser(token) func: %w", err)
-		return defaultInt, fmt.Errorf("%s error in grpc IdentifyUser(token) func: %w", errGRPC, err)
+		return defaultInt, fmt.Errorf("%s IdentifyUser(token) func: %w", errGRPC, err)
 	}
 
 	return int(resp.GetUserId()), nil

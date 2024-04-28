@@ -34,14 +34,12 @@ func NewApp(
 func (a *App) Run(ctx context.Context) error {
 	lst, err := net.Listen("tcp", fmt.Sprintf(":%d", a.serverPort))
 	if err != nil {
-		a.log.Fatalf("Run() grpcserver err: %w", err)
 		return err
 	}
-
-	if err := a.server.Serve(lst); err != nil {
-		a.log.Fatalf("Run() grpcserver err: %w", err)
-		return err
-	}
-
+	a.log.Infof("server started on localhost:%d", a.serverPort)
+	go func() {
+		a.log.Fatal(a.server.Serve(lst))
+	}()
+	
 	return nil
 }

@@ -22,10 +22,10 @@ services:
     build:
       context: ./
       dockerfile: auth_service/Dockerfile
-    command: ./auth_service/bin/main && migrate -database postgres://postgres:secret@localhost:5432/postgres?sslmode=disable -path auth_service/migrations up
+    command: ./auth_service/bin/main
     restart: always
     ports:
-      - 44044:44044
+      - 5003:5003
     depends_on:
       - postgres_dbauth
     environment:
@@ -41,9 +41,8 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_DBNAME=postgres
     networks:
-      - microservices 
+      - microservices
 
 networks:
   microservices:

@@ -1,9 +1,8 @@
 grpc:
-  authport: 44044
+  authport: 5003
 http:
   port: 8080
 kafka:
   brokers: [ "localhost:9092", "localhost:9093", "localhost:9094" ]
   groupID: api_gateway_consumer
   initTopics: true
-

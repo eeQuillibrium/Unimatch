@@ -44,11 +44,10 @@ func NewGRPCApp(
 }
 
 func (a *grpcapp) Run() error {
-	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", a.authPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(fmt.Sprintf("auth_service:%d", a.authPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
 	a.Auth = grpcclient.NewAuthClient(a.log, conn)
-
 	return nil
 }

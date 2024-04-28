@@ -34,32 +34,20 @@ func NewApp(
 func (a *app) Run() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
-	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=%s",
-		a.cfg.PostgresDB.Host,
-		a.cfg.PostgresDB.Port,
-		a.cfg.PostgresDB.Username,
-		os.Getenv("DB_PASSWORD"),
-		a.cfg.PostgresDB.DBName,
-		a.cfg.PostgresDB.SSLMode,
-	)
-	a.log.Info(dsn)
-	db, err := sqlx.Connect("postgres", dsn)
+	a.log.Info(fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
+		a.cfg.PostgresDB.Host, a.cfg.PostgresDB.Port, a.cfg.PostgresDB.Username, a.cfg.PostgresDB.DBName, os.Getenv("DB_PASSWORD"), a.cfg.PostgresDB.SSLMode))
+	db, err := sqlx.Connect("postgres", fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
+		a.cfg.PostgresDB.Host, a.cfg.PostgresDB.Port, a.cfg.PostgresDB.Username, a.cfg.PostgresDB.DBName, "secret", a.cfg.PostgresDB.SSLMode))
 	if err != nil {
-		a.log.Fatalf("postgres db open problem: %w", err)
+		a.log.Fatalf("sqlx.Connect(): %v", err)
 	}
 
 	authRepository := repository.NewRepository(db)
 	authService := service.NewService(authRepository)
 	grpcApp := grpcapp.NewApp(a.log, authService.AuthService, a.cfg.GRPC.Serverport)
-
-	go func() {
-		if err := grpcApp.Run(ctx); err != nil {
-			a.log.Fatalf("Run() error: %w", err)
-		}
-
-		cancel()
-	}()
+	if err := grpcApp.Run(ctx); err != nil {
+		a.log.Fatalf("Run() error: %w", err)
+	}
 
 	<-ctx.Done()
 }

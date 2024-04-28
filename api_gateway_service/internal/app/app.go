@@ -35,7 +35,7 @@ func (a *app) Run() error {
 	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg.GRPC.AuthPort)
 
 	if err := grpcApp.Run(); err != nil {
-		a.log.Errorf("error with runHttoServer %w", err)
+		a.log.Errorf("grpcApp.Run(): %w", err)
 	}
 
 	pr := kafka.NewProducer(a.log, a.cfg.Kafka.Brokers)

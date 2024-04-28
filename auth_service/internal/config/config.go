@@ -48,7 +48,7 @@ func InitConfig() (*Config, error) {
 func fetchConfigPath() string {
 	var path string
 
-	flag.StringVar(&path, "configpath", "", "path to config")
+	flag.StringVar(&path, "cfgpath", "", "path to config")
 	flag.Parse()
 
 	if path == "" {
