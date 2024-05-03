@@ -36,7 +36,6 @@ func (a *App) Run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	a.log.Infof("server started on localhost:%d", a.serverPort)
 	go func() {
 		a.log.Fatal(a.server.Serve(lst))
 	}()

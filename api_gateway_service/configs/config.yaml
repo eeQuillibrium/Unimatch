@@ -1,5 +1,6 @@
 grpc:
   authport: 5003
+  authhost: "localhost"
 http:
   port: 8080
 kafka:

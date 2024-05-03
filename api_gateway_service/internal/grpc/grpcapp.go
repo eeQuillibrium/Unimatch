@@ -29,12 +29,14 @@ type AuthGRPC interface {
 
 type grpcapp struct {
 	log      *logger.Logger
+	authHost string
 	authPort int
 	Auth     AuthGRPC
 }
 
 func NewGRPCApp(
 	log *logger.Logger,
+	authHost string,
 	authPort int,
 ) *grpcapp {
 	return &grpcapp{
@@ -44,7 +46,7 @@ func NewGRPCApp(
 }
 
 func (a *grpcapp) Run() error {
-	conn, err := grpc.Dial(fmt.Sprintf("auth_service:%d", a.authPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", a.authHost, a.authPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}

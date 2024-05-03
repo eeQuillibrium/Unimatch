@@ -15,7 +15,8 @@ type Config struct {
 	Kafka kafka.Config `yaml:"kafka"`
 }
 type GRPC struct {
-	AuthPort int `yaml:"authport"`
+	AuthPort int    `yaml:"authport"`
+	AuthHost string `yaml:"authhost"`
 }
 type Http struct {
 	Port int `yaml:"port"`
@@ -27,8 +28,6 @@ func InitConfig() (*Config, error) {
 	if path == "" {
 		return nil, errors.New("empty config path")
 	}
-
-
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return nil, err

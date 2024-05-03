@@ -3,6 +3,6 @@ grpc:
 postgresdb:
   username: "postgres"
   dbname: "postgres"
-  host: "postgres_dbauth"
+  host: "localhost"
   port: 5432
   sslmode: "disable"

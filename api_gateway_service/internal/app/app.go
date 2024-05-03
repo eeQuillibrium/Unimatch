@@ -32,7 +32,7 @@ func (a *app) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
-	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg.GRPC.AuthPort)
+	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg.GRPC.AuthHost, a.cfg.GRPC.AuthPort)
 
 	if err := grpcApp.Run(); err != nil {
 		a.log.Errorf("grpcApp.Run(): %w", err)
