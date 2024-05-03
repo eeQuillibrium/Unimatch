@@ -10,9 +10,11 @@ import (
 )
 
 type Config struct {
-	GRPC  GRPC         `yaml:"grpc"`
-	Http  Http         `yaml:"http"`
-	Kafka kafka.Config `yaml:"kafka"`
+	GRPC        GRPC         `yaml:"grpc"`
+	Http        Http         `yaml:"http"`
+	Kafka       kafka.Config `yaml:"kafka"`
+	KafkaTopics KafkaTopics  `yaml:"kafkatopics"`
+	AssetsPath  string       `yaml:"assetsPath"`
 }
 type GRPC struct {
 	AuthPort int `yaml:"authport"`
@@ -20,15 +22,15 @@ type GRPC struct {
 type Http struct {
 	Port int `yaml:"port"`
 }
-
+type KafkaTopics struct {
+	SetProfile kafka.TopicConfig `yaml:"setprofile"`
+}
 func InitConfig() (*Config, error) {
 	path := fetchConfigPath()
 
 	if path == "" {
 		return nil, errors.New("empty config path")
 	}
-
-
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return nil, err

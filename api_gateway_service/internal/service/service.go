@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 
+	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/dto"
 	grpcapp "github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/grpc"
 	"github.com/eeQuillibrium/Unimatch/pkg/kafka"
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
+	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/config"
 )
 
 type AuthService interface {
@@ -25,7 +27,10 @@ type AuthService interface {
 	) (userId int, err error)
 }
 type ProfileService interface {
-	
+	SetProfile(
+		ctx context.Context,
+		profile *dto.Profile,
+	) error
 }
 
 type Service struct {
@@ -35,11 +40,12 @@ type Service struct {
 
 func NewService(
 	log *logger.Logger,
+	cfg *config.Config,
 	gRPCClient grpcapp.AuthGRPC,
 	pr *kafka.Producer,
 ) *Service {
 	return &Service{
 		Auth:    NewAuthService(log, gRPCClient),
-		Profile: NewProfileService(log, pr),
+		Profile: NewProfileService(log, cfg, pr),
 	}
 }

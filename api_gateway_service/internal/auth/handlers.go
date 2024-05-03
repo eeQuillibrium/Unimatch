@@ -50,3 +50,11 @@ func (a *authHandlers) signInHandler() echo.HandlerFunc {
 		return nil
 	}
 }
+func (a *authHandlers) authHandler() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if err := c.Render(http.StatusOK, "auth.html", nil); err != nil {
+			return httpErrors.ParseErrors(err)
+		}
+		return nil
+	}
+}

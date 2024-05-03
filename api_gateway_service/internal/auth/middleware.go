@@ -10,7 +10,7 @@ import (
 
 func (a *authHandlers) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		token := c.Request().Header.Get("Authorization token")
+		token := c.Request().Header.Get("Authorization_token")
 
 		userId, err := a.authService.IdentifyUser(context.Background(), token)
 		if err != nil {

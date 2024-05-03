@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>FORM FOR PICTURE</head>
+    <body>
+        <form action="/profile/setProfile" method="POST" enctype="multipart/form-data" >
+            <label for="name">Name</label>
+            <input type="text" id="Name" name="name" /> 
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" /> 
+            <label for="age">About</label>
+            <input type="text" id="about" name="about" /> 
+            <label for="avatar">Choose a profile picture:</label>
+            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/jpg" />
+            <input type="submit" value="save" />
+        </form>
+    </body>
+</html>

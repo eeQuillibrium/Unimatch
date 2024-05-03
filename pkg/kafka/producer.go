@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"context"
 	"time"
 
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
@@ -17,7 +18,10 @@ type Producer struct {
 	wr  *kafka.Writer
 }
 
-func NewProducer(log *logger.Logger, brokers []string) *Producer {
+func NewProducer(
+	log *logger.Logger,
+	brokers []string,
+) *Producer {
 	return &Producer{log: log, wr: kafka.NewWriter(kafka.WriterConfig{
 		Brokers:      brokers,
 		Balancer:     &kafka.RoundRobin{},
@@ -25,4 +29,11 @@ func NewProducer(log *logger.Logger, brokers []string) *Producer {
 		ReadTimeout:  producerReadTimeout,
 		WriteTimeout: producerWriteTimeout,
 	})}
+}
+
+func (p *Producer) SendMessage(
+	ctx context.Context,
+	msgs ...kafka.Message,
+) error {
+	return p.wr.WriteMessages(ctx, msgs...)
 }
