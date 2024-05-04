@@ -48,7 +48,7 @@ func (a *app) Run() error {
 	profileHandlers.MapRoutes()
 
 	go func() {
-		if err := a.runHttpServer(); err != nil {
+		if err := a.runHttpServer(context.Background()); err != nil {
 			a.log.Errorf("error with runHttoServer %w", err)
 			cancel()
 		}
@@ -59,6 +59,6 @@ func (a *app) Run() error {
 	if err := a.echo.Shutdown(ctx); err != nil {
 		a.log.Warn("echo shutdown: %w", err)
 	}
-	
+
 	return nil
 }

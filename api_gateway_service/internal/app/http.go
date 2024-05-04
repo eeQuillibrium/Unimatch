@@ -1,8 +1,11 @@
 package app
 
 import (
-	"fmt"
+	"context"
 	"time"
+
+	"golang.ngrok.com/ngrok"
+	"golang.ngrok.com/ngrok/config"
 )
 
 const (
@@ -11,9 +14,19 @@ const (
 	writeTimeout   = 15 * time.Second
 )
 
-func (a *app) runHttpServer() error {
+func (a *app) runHttpServer(ctx context.Context) error {
 	a.echo.Server.ReadTimeout = readTimeout
 	a.echo.Server.WriteTimeout = writeTimeout
 	a.echo.Server.MaxHeaderBytes = maxHeaderBytes
-	return a.echo.Start(fmt.Sprintf(":%d", a.cfg.Http.Port))
+	listener, err := ngrok.Listen(ctx,
+		config.HTTPEndpoint(
+			config.WithDomain("up-distinctly-chamois.ngrok-free.app"),
+		),
+		ngrok.WithAuthtokenFromEnv(),
+	)
+	if err != nil {
+		return err
+	}
+	a.echo.Listener = listener
+	return a.echo.Start("")
 }
