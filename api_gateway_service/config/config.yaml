@@ -7,3 +7,10 @@ kafka:
   brokers: [ "localhost:9092", "localhost:9093", "localhost:9094" ]
   groupID: api_gateway_consumer
   initTopics: true
+kafkaTopics:
+  setProfile:
+    topicName: set_profile
+    partitions: 10
+    replicationFactor: 1
+
+assetsPath: "assets"

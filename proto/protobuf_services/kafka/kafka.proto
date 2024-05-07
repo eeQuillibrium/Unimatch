@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package kafkaMessages;
+
+option go_package = "./;kafkaMessages";
+
+message Profile {
+    int64 UserID = 1;
+    string Name = 2;
+    int64 Age = 3;
+    string About = 4;
+    bytes Avatar = 5;
+}

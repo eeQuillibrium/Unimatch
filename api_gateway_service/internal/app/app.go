@@ -10,6 +10,7 @@ import (
 	grpcapp "github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/grpc"
 	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/profile"
 	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/service"
+	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/templates"
 	"github.com/eeQuillibrium/Unimatch/pkg/kafka"
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
 	"github.com/labstack/echo/v4"
@@ -32,24 +33,27 @@ func (a *app) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
+	a.echo.Renderer = templates.NewTemplate(a.cfg.AssetsPath)
+
 	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg.GRPC.AuthHost, a.cfg.GRPC.AuthPort)
 
 	if err := grpcApp.Run(); err != nil {
-		a.log.Errorf("grpcApp.Run(): %w", err)
+		a.log.Errorf("grpcApp.Run(): %v", err)
 	}
 
 	pr := kafka.NewProducer(a.log, a.cfg.Kafka.Brokers)
-	services := service.NewService(a.log, grpcApp.Auth, pr)
+	services := service.NewService(a.log, a.cfg, grpcApp.Auth, pr)
 
 	authHandlers := auth.NewAuthHandlers(a.log, a.echo.Group("/auth"), services.Auth)
 	authHandlers.MapRoutes()
 
-	profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile", authHandlers.AuthMiddleware), services.Profile)
+	//profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile", authHandlers.AuthMiddleware), services.Profile)
+	profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile"), services.Profile)
 	profileHandlers.MapRoutes()
 
 	go func() {
 		if err := a.runHttpServer(context.Background()); err != nil {
-			a.log.Errorf("error with runHttoServer %w", err)
+			a.log.Errorf("a.runHttpServer(): %v", err)
 			cancel()
 		}
 	}()
@@ -57,7 +61,7 @@ func (a *app) Run() error {
 	<-ctx.Done()
 
 	if err := a.echo.Shutdown(ctx); err != nil {
-		a.log.Warn("echo shutdown: %w", err)
+		a.log.Warnf("echo.Shutdown(): %v", err)
 	}
 
 	return nil

@@ -1,0 +1,2 @@
+docker run -p 5433:5432 --name profile_db -e POSTGRES_PASSWORD=secret -d postgres:latest
+migrate -database postgres://postgres:secret@localhost:5432/postgres?sslmode=disable -path migrations up

@@ -1,15 +1,10 @@
 package kafka
 
 import (
-	"time"
+	"context"
 
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
 	"github.com/segmentio/kafka-go"
-)
-
-const (
-	producerReadTimeout  = 10 * time.Second
-	producerWriteTimeout = 10 * time.Second
 )
 
 type Producer struct {
@@ -17,12 +12,23 @@ type Producer struct {
 	wr  *kafka.Writer
 }
 
-func NewProducer(log *logger.Logger, brokers []string) *Producer {
+func NewProducer(
+	log *logger.Logger,
+	brokers []string,
+) *Producer {
 	return &Producer{log: log, wr: kafka.NewWriter(kafka.WriterConfig{
 		Brokers:      brokers,
 		Balancer:     &kafka.RoundRobin{},
-		RequiredAcks: -1,
+		RequiredAcks: producerRequiredAcks,
 		ReadTimeout:  producerReadTimeout,
 		WriteTimeout: producerWriteTimeout,
+		MaxAttempts:  producerMaxAttempts,
 	})}
+}
+
+func (p *Producer) SendMessage(
+	ctx context.Context,
+	msgs ...kafka.Message,
+) error {
+	return p.wr.WriteMessages(ctx, msgs...)
 }

@@ -1,0 +1,17 @@
+kafka:
+  brokers: [ "localhost:9092", "localhost:9093", "localhost:9094" ]
+  groupID: profile_microservice_consumer
+  initTopics: true
+kafkaTopics:
+  setProfile:
+    topicName: set_profile
+    partitions: 10
+    replicationFactor: 1
+postgresDB:
+  host: "localhost"
+  port: 5433
+  sslmode: "disable" 
+  dbname: "postgres"
+  password: "secret"
+  username: "postgres"
+  tableNames: [ "Profiles" ]

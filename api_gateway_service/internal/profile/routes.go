@@ -1,6 +1,7 @@
 package profile
 
 func (p *profileHandlers) MapRoutes() {
-	p.group.PUT("/", p.setProfileHandler())
-	p.group.GET("/", p.getProfileHandler())
+	p.group.POST("", p.setProfileHandler())
+	p.group.GET("/form", p.formProfileHandler())
+	p.group.GET("", p.getProfileHandler())
 }
