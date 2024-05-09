@@ -57,6 +57,7 @@ services:
       - 5004:5004
     depends_on:
       - postgres_dbprofile
+      - postgres_redis
     environment:
       - DB_PASSWORD=secret
       - CONFIG_PROFILE_PATH=./profile_service/configs/config.yaml
@@ -69,6 +70,13 @@ services:
       - 5433:5432
     environment:
       - POSTGRES_PASSWORD=secret
+    networks:
+      - microservices
+  redis_dbprofile:
+    restart: always
+    image: redis/redis-stack:latest
+    ports:
+      - 6378:6379
     networks:
       - microservices
   zookeeper:

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package profile;
+
+option go_package = "profile.grpc";
+
+service Profile {
+    rpc GetProfile(GetProfileReq) returns (GetProfileResp);
+}
+
+message GetProfileReq {
+    int64 userID = 1;
+}
+message GetProfileResp {
+    string name = 1;
+    int64 age = 2;
+    string about = 3;
+    string imgPath = 4;
+}

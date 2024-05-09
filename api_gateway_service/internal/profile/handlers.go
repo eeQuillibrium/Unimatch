@@ -3,6 +3,7 @@ package profile
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/eeQuillibrium/Unimatch/api_gateway_service/internal/dto"
 	httpErrors "github.com/eeQuillibrium/Unimatch/pkg/http_errors"
@@ -23,11 +24,11 @@ func (h *profileHandlers) setProfileHandler() echo.HandlerFunc {
 		if err != nil {
 			return httpErrors.ParseErrors(err)
 		}
-		//userID, err := strconv.Atoi(c.Request().Header.Get("userid"))
-		//if err != nil {
-		//	return httpErrors.ParseErrors(err)
-		//}
-		//profile.UserId = int64(userID)
+		userID, err := strconv.Atoi(c.Request().Header.Get("userid"))
+		if err != nil {
+			return httpErrors.ParseErrors(err)
+		}
+		profile.UserId = int64(userID)
 		if err := h.profileService.SetProfile(ctx, profile); err != nil {
 			httpErrors.ParseErrors(err)
 		}
@@ -38,8 +39,19 @@ func (h *profileHandlers) setProfileHandler() echo.HandlerFunc {
 
 func (h *profileHandlers) getProfileHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		h.log.Info("profile GET")
-		return nil
+		ctx := context.Background()
+
+		userID, err := strconv.Atoi(c.Request().Header.Get("userid"))
+		if err != nil {
+			return httpErrors.ParseErrors(err)
+		}
+
+		profile, err := h.gRPCApp.GetProfile(ctx, userID)
+		if err != nil {
+			return httpErrors.ParseErrors(err)
+		}
+
+		return c.JSON(http.StatusOK, profile)
 	}
 }
 

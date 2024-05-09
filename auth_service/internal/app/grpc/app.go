@@ -36,6 +36,7 @@ func (a *App) Run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	
 	go func() {
 		a.log.Fatal(a.server.Serve(lst))
 	}()

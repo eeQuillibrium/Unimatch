@@ -13,6 +13,8 @@ type Config struct {
 	Kafka       kafka.Config `yaml:"kafka"`
 	KafkaTopics KafkaTopics  `yaml:"kafkaTopics"`
 	PostgresDB  PostgresDB   `yaml:"postgresDB"`
+	RedisDB     RedisDB      `yaml:"redisDB"`
+	GRPC        GRPC         `yaml:"grpc"`
 }
 
 type KafkaTopics struct {
@@ -26,6 +28,15 @@ type PostgresDB struct {
 	DBName     string   `yaml:"dbname"`
 	Username   string   `yaml:"username"`
 	TableNames []string `yaml:"tableNames"`
+}
+type RedisDB struct {
+	Port     int    `yaml:"port"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
+	Host     int    `yaml:"host"`
+}
+type GRPC struct {
+	Serverport int `yaml:"serverport"`
 }
 
 func InitConfig() (*Config, error) {

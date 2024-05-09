@@ -12,13 +12,13 @@ func (a *authHandlers) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Request().Header.Get("Authorization_token")
 
-		userId, err := a.authService.IdentifyUser(context.Background(), token)
+		userID, err := a.authService.IdentifyUser(context.Background(), token)
 		if err != nil {
 			c.Response().WriteHeader(http.StatusUnauthorized)
 			return c.JSON(http.StatusUnauthorized, token)
 		}
 
-		c.Request().Header.Set("userid", fmt.Sprintf("%d", userId))
+		c.Request().Header.Set("userid", fmt.Sprintf("%d", userID))
 
 		return next(c)
 	}

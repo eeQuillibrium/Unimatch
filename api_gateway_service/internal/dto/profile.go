@@ -15,6 +15,14 @@ type Profile struct {
 	Avatar []byte
 }
 
+type GetProfile struct {
+	UserId  int64
+	Name    string
+	Age     int64
+	About   string
+	ImgPath string
+}
+
 func AccessProfile(
 	ctx context.Context,
 	mForm *multipart.Form,

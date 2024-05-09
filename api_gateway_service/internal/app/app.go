@@ -35,7 +35,7 @@ func (a *app) Run() error {
 
 	a.echo.Renderer = templates.NewTemplate(a.cfg.AssetsPath)
 
-	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg.GRPC.AuthHost, a.cfg.GRPC.AuthPort)
+	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg)
 
 	if err := grpcApp.Run(); err != nil {
 		a.log.Errorf("grpcApp.Run(): %v", err)
@@ -47,8 +47,8 @@ func (a *app) Run() error {
 	authHandlers := auth.NewAuthHandlers(a.log, a.echo.Group("/auth"), services.Auth)
 	authHandlers.MapRoutes()
 
-	//profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile", authHandlers.AuthMiddleware), services.Profile)
-	profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile"), services.Profile)
+	//profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile"), services.Profile)
+	profileHandlers := profile.NewProfileHandlers(a.log, a.echo.Group("/profile", authHandlers.AuthMiddleware), services.Profile)
 	profileHandlers.MapRoutes()
 
 	go func() {

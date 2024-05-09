@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/jpeg"
 	"os"
+	"strings"
 
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
 	"github.com/eeQuillibrium/Unimatch/profile_service/internal/domain/models"
@@ -52,11 +53,28 @@ func (s *profileProvider) StoreProfile(
 		return err
 	}
 
-	profileModel := models.AccessProfile(profile, imgPath)
+	profileModel := models.AccessKafkaProfile(profile, imgPath)
 
 	if err := s.repo.StoreProfile(ctx, profileModel); err != nil {
 		s.log.Warnf("repo.StoreProfile(): %v", err)
 	}
-	
+
 	return nil
+}
+
+func (s *profileProvider) GetProfile(
+	ctx context.Context,
+	userID int,
+) (*models.Profile, error) {
+	profile, err := s.repo.GetProfile(ctx, userID)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "redis") {
+			s.log.Warn(err)
+		} else {
+			return nil, err
+		}
+	}
+
+	return profile, nil
 }

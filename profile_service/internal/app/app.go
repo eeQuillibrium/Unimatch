@@ -8,12 +8,14 @@ import (
 
 	kafkaClient "github.com/eeQuillibrium/Unimatch/pkg/kafka"
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
+	grpcapp "github.com/eeQuillibrium/Unimatch/profile_service/internal/app/grpc"
 	"github.com/eeQuillibrium/Unimatch/profile_service/internal/config"
 	kafkaReader "github.com/eeQuillibrium/Unimatch/profile_service/internal/delivery/kafka"
 	"github.com/eeQuillibrium/Unimatch/profile_service/internal/repository"
 	"github.com/eeQuillibrium/Unimatch/profile_service/internal/service"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -39,11 +41,20 @@ func (a *App) Run() error {
 	if err != nil {
 		return err
 	}
-
-	repo := repository.NewRepository(a.log, a.cfg, db)
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", a.cfg.RedisDB.Host, a.cfg.RedisDB.Port),
+		Password: a.cfg.RedisDB.Password,
+		DB:       a.cfg.RedisDB.DB,
+	})
+	repo := repository.NewRepository(a.log, a.cfg, db, rdb)
 
 	services := service.NewService(a.log, repo)
 
+	grpcApp := grpcapp.NewGRPCApp(a.log, a.cfg, services.ProfileProvider)
+
+	if err := grpcApp.Run(); err != nil {
+		a.log.Warnf("gRPCApp.Run(): %v", err)
+	}
 	msgReader := kafkaReader.NewMessageReader(a.log, &a.cfg.KafkaTopics, services)
 
 	a.cg = kafkaClient.NewConsumerGroup(a.log, a.cfg.Kafka.Brokers, a.cfg.Kafka.GroupID)

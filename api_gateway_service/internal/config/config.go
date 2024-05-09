@@ -17,8 +17,10 @@ type Config struct {
 	AssetsPath  string       `yaml:"assetsPath"`
 }
 type GRPC struct {
-	AuthPort int    `yaml:"authport"`
-	AuthHost string `yaml:"authhost"`
+	AuthPort    int    `yaml:"authport"`
+	AuthHost    string `yaml:"authhost"`
+	ProfilePort int    `yaml:"profileport"`
+	ProfileHost string `yaml:"profilehost"`
 }
 type Http struct {
 	Port int `yaml:"port"`

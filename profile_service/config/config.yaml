@@ -15,3 +15,10 @@ postgresDB:
   password: "secret"
   username: "postgres"
   tableNames: [ "Profiles" ]
+redisDB:
+  port: 6378
+  password: ""
+  db: 0
+  host: "localhost"  
+grpc:
+  serverport: 5004

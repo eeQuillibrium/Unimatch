@@ -46,6 +46,7 @@ func (a *app) Run() {
 	authRepository := repository.NewRepository(db)
 	authService := service.NewService(authRepository)
 	grpcApp := grpcapp.NewApp(a.log, authService.AuthService, a.cfg.GRPC.Serverport)
+	
 	if err := grpcApp.Run(ctx); err != nil {
 		a.log.Fatalf("Run() error: %w", err)
 	}

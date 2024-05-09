@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/eeQuillibrium/Unimatch/pkg/logger"
+	"github.com/eeQuillibrium/Unimatch/profile_service/internal/domain/models"
 	"github.com/eeQuillibrium/Unimatch/profile_service/internal/repository"
 	kafkaMessages "github.com/eeQuillibrium/Unimatch/proto/gen/go/kafka"
 )
@@ -13,6 +14,10 @@ type ProfileProvider interface {
 		ctx context.Context,
 		profile *kafkaMessages.Profile,
 	) error
+	GetProfile(
+		ctx context.Context,
+		userID int,
+	) (*models.Profile, error)
 }
 type Service struct {
 	ProfileProvider
